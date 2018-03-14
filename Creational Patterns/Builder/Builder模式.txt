@@ -50,7 +50,7 @@ BankAccount anotherAccount = new BankAccount(789L, "Homer", null, 2.5, 100.00); 
 2、对象状态不正确
 
 这种情况下，Builder模式就可以起作用了。
-Builder模式允许我们建立可读且容易理解的代码来建立复杂对象。它通常结合流式接口来实现。
+Builder模式允许我们建立可读且容易理解的代码来建立复杂对象。它通常结合流式接口(Fluent Interface, C++的iostream就是采用这种流式接口)来实现。
 这个Builder会包含BankAccount类拥有的所有的字段。我们可以在builder上配置所有我们想要的字段，然后通过builder创建account对象。
 同时，我们将把BankAccount的public构造函数改成private，因此，只有builder可以创建BankAccount对象。
 public class BankAccount {
