@@ -1,0 +1,116 @@
+假设我们在开发一个银行系统。
+不考虑其他事情，我们需要一种表示银行账户的方式。第一种方式可能如下：
+public class BankAccount {
+    private long accountNumber;  //账号
+    private String owner;        //户主
+    private double balance;      //账目
+    public BankAccount(long accountNumber, String owner, double balance) {
+        this.accountNumber = accountNumber;
+        this.owner = owner;
+        this.balance = balance;
+    }
+    //Getters and setters omitted for brevity.
+}
+这个表示很合理很直接，我们可以这么用它：
+BankAccount account = new BankAccount(123L, "Bart", 100.00);
+
+不幸的是，软件解决方案几乎很少保持如此简单：假设又有一些新的需求，我们应该为每个账户记录每个月的利率（monthly interest rate），
+该账户什么时候开户的，以及在哪个支行开户的（其中开户支行是可选的）。看起来，这也很简单，我们可以拿出一个2.0版的BankAccount。
+public class BankAccount {
+    private long accountNumber;
+    private String owner;
+    private String branch;
+    private double balance;
+    private double interestRate;
+    public BankAccount(long accountNumber, String owner, String branch, double balance, double interestRate) {
+        this.accountNumber = accountNumber;
+        this.owner = owner;
+        this.branch = branch;
+        this.balance = balance;
+        this.interestRate = interestRate;
+   }
+    //Getters and setters omitted for brevity.
+}
+此后，我们如下使用新的BankAccount：
+BankAccount account = new BankAccount(456L, "Marge", "Springfield", 100.00, 2.5);
+BankAccount anotherAccount = new BankAccount(789L, "Homer", null, 2.5, 100.00);  //Oops!
+编译器认为上述代码很好，没任何问题。然后实际上：Homer这个账户里面的资金每个月会翻倍。原因只是因为某个使用BankAccount的程序员传参顺序有问题。
+像上面的BankAccount定义，确实可能出现上面的问题：对于有着相同类型且连续的参数，意外交换了参数顺序的情况并不难出现。由于编译器并不认为这样的
+代码有错，这个问题在运行时才会表现出来（也许运行时也不那么容易表现出来，这种情况问题可能更加严重）。
+
+另外：添加更多的构造函数参数，也让代码变得更加难读。比如我们有10个构造函数参数，咋看之下，构造函数的参数分别表示什么就变得难以标识。
+更糟糕的是，其中有些参数或许是可选的，这意味着我们可能需要定义一系列重载的构造函数来处理可能的组合情况，或者（不定义一系列重载构造函数的话），
+我们需要给构造函数传递一些空的无意义的参数值。
+
+或许，有人认为可以通过先调用一个无参数构造函数来创建一个空的银行账号对象，然后通过调用一系列setter来设置这个账号。
+这会带来另外一个问题：如果碰巧程序员忘了调用某个setter方法，那么我们会产生一个初始化不完全的对象。
+
+所以，我们有两个特定问题需要解决：
+1、构造函数参数太多（可能还有某些可选的参数）
+2、对象状态不正确
+
+这种情况下，Builder模式就可以起作用了。
+Builder模式允许我们建立可读且容易理解的代码来建立复杂对象。它通常结合流式接口来实现。
+这个Builder会包含BankAccount类拥有的所有的字段。我们可以在builder上配置所有我们想要的字段，然后通过builder创建account对象。
+同时，我们将把BankAccount的public构造函数改成private，因此，只有builder可以创建BankAccount对象。
+public class BankAccount {
+    //Here it makes sense to have Builder nested within BankAccount 
+    //rather than as a peer class which would presumably be called BankAccountBuilder.
+    public static class Builder {
+        private long accountNumber; //This is important, so we'll pass it to the constructor.
+        private String owner;
+        private String branch;
+        private double balance;
+        private double interestRate;
+        public Builder(long accountNumber) {
+            this.accountNumber = accountNumber;
+        }
+        public Builder withOwner(String owner){
+            this.owner = owner;
+            return this;  //By returning the builder each time, we can create a fluent interface.
+        }
+        public Builder atBranch(String branch){
+            this.branch = branch;
+            return this;
+        }
+        public Builder openingBalance(double balance){
+            this.balance = balance;
+            return this;
+        }
+        public Builder atRate(double interestRate){
+            this.interestRate = interestRate;
+            return this;
+        }
+        public BankAccount build(){
+            //Here we create the actual bank account object, which is always in a fully initialised state when it's returned.
+            BankAccount account = new BankAccount();  //Since the builder is in the BankAccount class, we can invoke its private constructor.
+            account.accountNumber = this.accountNumber;
+            account.owner = this.owner;
+            account.branch = this.branch;
+            account.balance = this.balance;
+            account.interestRate = this.interestRate;
+            return account;
+        }
+    }
+    //Fields omitted for brevity.
+    private BankAccount() {
+        //Constructor is now private.
+    }
+    //Getters and setters omitted for brevity.
+}
+
+现在，创建account的代码可以如下：
+BankAccount account = new BankAccount.Builder(1234L)
+            .withOwner("Marge")
+            .atBranch("Springfield")
+            .openingBalance(100)
+            .atRate(2.5)
+            .build();
+BankAccount anotherAccount = new BankAccount.Builder(4567L)
+            .withOwner("Homer")
+            .atBranch("Springfield")
+            .openingBalance(100)
+            .atRate(2.5)
+            .build();
+
+
