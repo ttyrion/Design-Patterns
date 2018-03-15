@@ -1,0 +1,167 @@
+在Factory（或称Factory Method）模式中，我们创建对象，而并不需要把对象的创建逻辑和过程暴露给客户端代码。客户端代码可以用同一个统一接口，创建新类型的对象。
+也就是说：Factory模式可以让客户端代码以一种这样的方式创建一个库的对象：它不必和库内部的类层次紧密耦合。
+
+为什么使用工厂模式？
+看以下代码，这里并没有使用模式：
+// A design without factory pattern
+#include <iostream>
+using namespace std;
+ 
+// Library classes
+class Vehicle {
+public:
+    virtual void printVehicle() = 0;
+};
+class TwoWheeler : public Vehicle {
+public:
+    void printVehicle()  {
+        cout << "I am two wheeler" << endl;
+    }
+};
+class FourWheeler : public Vehicle {
+    public:
+    void printVehicle()  {
+        cout << "I am four wheeler" << endl;
+    }
+};
+ 
+// Client (or user) class
+class Client {
+public:
+    Client(int type)  {
+ 
+        // Client explicitly creates classes according to type
+        if (type == 1)
+            pVehicle = new TwoWheeler();
+        else if (type == 2)
+            pVehicle = new FourWheeler();
+        else
+            pVehicle = NULL;
+    }
+ 
+    ~Client()   {
+        if (pVehicle)
+        {
+            delete[] pVehicle;
+            pVehicle = NULL;
+        }
+    }
+ 
+    Vehicle* getVehicle() {
+        return pVehicle;
+    }
+private:
+    Vehicle *pVehicle;
+};
+ 
+// Driver program
+int main() {
+    Client *pClient = new Client(1);
+    Vehicle * pVehicle = pClient->getVehicle();
+    pVehicle->printVehicle();
+    return 0;
+}
+上面的设计有什么问题？
+Client内部根据构造的时候传入的参数来创建TwoWheeler或FourWheeler对象。
+如果Library增加了一个新类ThreeWheeler来操控一种三轮的车，这种情况下会怎么样？
+Client内部要增加一个新的if分支来创建ThreeWheeler对象，且Client需要重新编译生成。
+也就是说：可能仅仅是因为调用Client的地方(这里是main)，需要使用Library的一个新类型，而不得不修改Client的实现。
+
+如何避免这种情况？
+解决方案是：创建一个static（就是Factory）method方法。
+// C++ program to demonstrate factory method design pattern
+#include <iostream>
+using namespace std;
+ 
+enum VehicleType {
+    VT_TwoWheeler,    VT_ThreeWheeler,    VT_FourWheeler
+};
+ 
+// Library classes
+class Vehicle {
+public:
+    virtual void printVehicle() = 0;
+    static Vehicle* Create(VehicleType type);
+};
+class TwoWheeler : public Vehicle {
+public:
+    void printVehicle() {
+        cout << "I am two wheeler" << endl;
+    }
+};
+class ThreeWheeler : public Vehicle {
+public:
+    void printVehicle() {
+        cout << "I am three wheeler" << endl;
+    }
+};
+class FourWheeler : public Vehicle {
+    public:
+    void printVehicle() {
+        cout << "I am four wheeler" << endl;
+    }
+};
+ 
+// Factory method to create objects of different types.
+// Change is required only in this function to create a new object type
+Vehicle* Vehicle::Create(VehicleType type) {
+    if (type == VT_TwoWheeler)
+        return new TwoWheeler();
+    else if (type == VT_ThreeWheeler)
+        return new ThreeWheeler();
+    else if (type == VT_FourWheeler)
+        return new FourWheeler();
+    else return NULL;
+}
+ 
+// Client class
+class Client {
+public:
+ 
+    // Client doesn't explicitly create objects
+    // but passes type to factory method "Create()"
+    Client()
+    {
+        VehicleType type = VT_ThreeWheeler;
+        pVehicle = Vehicle::Create(type);
+    }
+    ~Client() {
+        if (pVehicle) {
+            delete[] pVehicle;
+            pVehicle = NULL;
+        }
+    }
+    Vehicle* getVehicle()  {
+        return pVehicle;
+    }
+ 
+private:
+    Vehicle *pVehicle;
+};
+ 
+// Driver program
+int main() {
+    Client *pClient = new Client();
+    Vehicle * pVehicle = pClient->getVehicle();
+    pVehicle->printVehicle();
+    return 0;
+}
+在上面的例子中，client和Libray类层次之间被解耦，现在有library负责创建合适的类型的对象。Client仅仅只需要调用一下Library的Factory Method，并不需要关心Library内部实现。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
