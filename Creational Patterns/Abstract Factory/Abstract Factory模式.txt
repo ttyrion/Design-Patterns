@@ -1,0 +1,247 @@
+Abstract Factory设计模式的意义：
+1、提供一套接口去创建一族相关的或者独立的对象，且不需要声明它们的实体类。
+2、封装：一些可能的"platforms", 以及一系列"products"的构造。
+3、使用new操作符被认为不是那么好。
+
+模式解决的问题：
+如果一个软件要具备可移植性，那它需要封装平台依赖性。这里所谓的“平台”，可能包括：窗口系统，操作系统，数据库等等。
+
+讨论：
+“Factory”对象负责提供创建各个平台的服务。
+“Client”并不直接创建平台对象，它们请求“Factory”对象替自己完成这一工作。
+
+实现：
+假设我们要建设一个全球化的汽车工厂。
+如果应用“Factory”（ie，Factory Method）模式，它适合于单一的地理位置。
+而对于“Abstract Factory”设计模式，我们需要做多个地理位置的处理以及一些关键的设计更改。
+
+我们再每个地方都需要也给汽车工厂，比如IndiaCarFactory, USACarFactory and DefaultCarFactory。
+我们的程序应该能标识出当前它正在哪个地方被使用，这样我们就可以用合适的汽车工厂，甚至不需要知道该汽车工厂内部的实现情况。
+这也可以避免我们在某特定的地方使用了错误的汽车工厂。
+这就是Abstract Factory模式被用来解决的问题。
+
+// Java Program to demonstrate the 
+// working of Abstract Factory Pattern
+ 
+enum CarType
+{
+    MICRO, MINI, LUXURY
+}
+ 
+abstract class Car
+{
+    Car(CarType model, Location location)
+    {
+        this.model = model;
+        this.location = location;
+    }
+  
+    abstract void construct();
+  
+    CarType model = null;
+    Location location = null;
+  
+    CarType getModel()
+    {
+        return model;
+    }
+  
+    void setModel(CarType model)
+    {
+        this.model = model;
+    }
+  
+    Location getLocation()
+    {
+        return location;
+    }
+  
+    void setLocation(Location location)
+    {
+        this.location = location;
+    }
+  
+    @Override
+    public String toString()
+    {
+        return "CarModel - "+model + " located in "+location;
+    }
+}
+ 
+class LuxuryCar extends Car
+{
+    LuxuryCar(Location location)
+    {
+        super(CarType.LUXURY, location);
+        construct();
+    }
+    @Override
+    protected void construct()
+    {
+        System.out.println("Connecting to luxury car");
+    }
+}
+ 
+class MicroCar extends Car
+{
+    MicroCar(Location location)
+    {
+        super(CarType.MICRO, location);
+        construct();
+    }
+    @Override
+    protected void construct()
+    {
+        System.out.println("Connecting to Micro Car ");
+    }
+}
+ 
+class MiniCar extends Car
+{
+    MiniCar(Location location)
+    {
+        super(CarType.MINI,location );
+        construct();
+    }
+     
+    @Override
+    void construct()
+    {
+        System.out.println("Connecting to Mini car");
+    }
+}
+ 
+enum Location
+{
+  DEFAULT, USA, INDIA
+}
+ 
+class INDIACarFactory
+{
+    static Car buildCar(CarType model)
+    {
+        Car car = null;
+        switch (model)
+        {
+            case MICRO:
+                car = new MicroCar(Location.INDIA);
+                break;
+             
+            case MINI:
+                car = new MiniCar(Location.INDIA);
+                break;
+                 
+            case LUXURY:
+                car = new LuxuryCar(Location.INDIA);
+                break;
+                 
+                default:
+                break;
+             
+        }
+        return car;
+    }
+}
+ 
+class DefaultCarFactory
+{
+    public static Car buildCar(CarType model)
+    {
+        Car car = null;
+        switch (model)
+        {
+            case MICRO:
+                car = new MicroCar(Location.DEFAULT);
+                break;
+             
+            case MINI:
+                car = new MiniCar(Location.DEFAULT);
+                break;
+                 
+            case LUXURY:
+                car = new LuxuryCar(Location.DEFAULT);
+                break;
+                 
+                default:
+                break;
+             
+        }
+        return car;
+    }
+}
+ 
+ 
+class USACarFactory
+{
+    public static Car buildCar(CarType model)
+    {
+        Car car = null;
+        switch (model)
+        {
+            case MICRO:
+                car = new MicroCar(Location.USA);
+                break;
+             
+            case MINI:
+                car = new MiniCar(Location.USA);
+                break;
+                 
+            case LUXURY:
+                car = new LuxuryCar(Location.USA);
+                break;
+                 
+                default:
+                break;
+             
+        }
+        return car;
+    }
+}
+ 
+ 
+ 
+class CarFactory
+{
+    private CarFactory() 
+    {
+         
+    }
+    public static Car buildCar(CarType type)
+    {
+        Car car = null;
+        // We can add any GPS Function here which
+        // read location property somewhere from configuration
+        // and use location specific car factory
+        // Currently I'm just using INDIA as Location
+        Location location = Location.INDIA; 
+         
+        switch(location)
+        {
+            case USA:
+                car = USACarFactory.buildCar(type);
+                break;
+                 
+            case INDIA:
+                car = INDIACarFactory.buildCar(type);
+                break;
+                     
+            default:
+                car = DefaultCarFactory.buildCar(type);
+ 
+        }
+         
+        return car;
+ 
+    }
+}
+ 
+class AbstractDesign 
+{
+    public static void main(String[] args)
+    {
+        System.out.println(CarFactory.buildCar(CarType.MICRO));
+        System.out.println(CarFactory.buildCar(CarType.MINI));
+        System.out.println(CarFactory.buildCar(CarType.LUXURY));
+    }
+}
+
