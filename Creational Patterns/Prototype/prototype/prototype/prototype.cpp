@@ -114,6 +114,8 @@ int main()
     if (printer) {
         printer->SetManufacturer("Cannon Japan");
         printer->Print();
+
+        delete printer;
     }
 
     return 0;
