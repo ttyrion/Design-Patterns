@@ -1,0 +1,8 @@
+Adapter的意义：
+1、把一个类A的接口转换成另一套某个client期望的接口，否则类A就会因为接口不兼容的问题，不能被client复用。
+2、给一个已经存在的类封装一下，提供出一套新的接口（a new view of this class）。
+3、在新系统和就组件之间提供一个映射。
+
+比如Android手机充电器的mini usb接口不能给iPhone充电。
+但是中间接一个转接头，把mini usb接口转成iPhone的充电接口，就能达到复用Android手机充电器的目的。
+这里的转接头，就是一个Adapter。
