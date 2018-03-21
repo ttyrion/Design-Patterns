@@ -1,0 +1,29 @@
+Concept: what are design patterns?
+1、Software design patterns are abstractions that help structure system designs. 
+2、A design pattern is neither a static solution, nor is it an algorithm. 
+3、A pattern is a way to describe and address by name (mostly a simplistic description of its goal), a repeatable solution or approach to a common design problem,
+   that is, a common way to solve a generic problem.
+4、Patterns contribute to a shared vocabulary amongst developers.
+   
+Categories:
+Depending on the design problem they address, design patterns can be classified in different categories, of which the main categories are:
+Creational Patterns
+Structural Patterns
+Behavioral Patterns.
+
+1、Creational Patterns
+These design patterns are all about class instantiation.
+
+2、Structural Patterns
+These design patterns are all about Class and Object composition. 
+Structural class-creation patterns use inheritance to compose interfaces. 
+Structural object-patterns define ways to compose objects to obtain new functionality.
+*Structural Patterns contains: Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Private Class Data, Proxy.
+几个模式的联系与区别:
+2.1 Adapter makes things work after they're designed; Bridge makes them work before they are.
+2.2 Bridge is designed up-front to let the abstraction and the implementation vary independently. Adapter is retrofitted to make unrelated classes work together.
+2.3 Adapter provides a different interface to its subject. Proxy provides the same interface. Decorator provides an enhanced interface.
+2.4 Adapter is meant to change the interface of an existing object. Decorator enhances another object without changing its interface. 
+    Decorator is thus more transparent to the application than an adapter is. As a consequence, Decorator supports recursive composition, which isn't possible with pure Adapters.
+2.5 Facade defines a new interface, whereas Adapter reuses an old interface. 
+    Remember that Adapter makes two existing interfaces work together as opposed to defining an entirely new one.
