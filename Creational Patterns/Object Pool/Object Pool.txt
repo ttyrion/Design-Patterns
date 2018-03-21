@@ -27,5 +27,43 @@ pool可以设置限制大小，当pool的acquireReusable方法因为某些原因
 然后这个reusable对象会被放回pool内的Reusable对象集合。
 
 
+Resource Loading Strategy(object creation strategy)
+Several strategies are available, for example:
+1、Eager: A specified number of Reusables are created by the ReusablePool when the ReusablePool is instantiated.
+2、Lazy: Reusables are not created by the ReusablePool until they are requested by the a Client. Once Reusables are released, they are immediately available for other Clients.
+3、Hybrid(A synthesis of Eager and Lazy): A specified number of Reusables are created eagerly, but additional Reusables are created lazily.
+4、Lazy-Expanding: Creates resources lazily, but doesn’t re-use them until the ReusablePool reaches a certain size.
+5、Eager-Expanding: Creates resources eagerly. Creates additional resources when available objects in the ReusablePool drops below a certain threshold.
+6、Recycling Methods
+一些可用策略：
+1、急切性策略：ReusablePool初始化的时候即创建特定数目的可复用对象
+2、懒惰性策略：ReusablePool只在有client请求的时候才创建对象，该对象在被client释放后（还给eusablePool，非内存释放），即可被其他client复用。
+3、混合性策略：ReusablePool初始化时创建部分对象，当可复用对象数目不够时，创建新对象。
+4、扩展懒惰策略：ReusablePool在收到client请求时创建新对象，当pool内的对象达到一定数目后，才复用pool内的对象。
+5、扩展急切策略：ReusablePool初始化时创建部分对象，当pool内可复用的对象数目下降到某个阈值的时候，创建其他对象。
+6、如有必要的话ReusablePool有责任把client使用完毕还回来的对象reset到某个初始状态。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
