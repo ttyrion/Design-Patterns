@@ -27,6 +27,7 @@ public:
             else return nullptr;
         }
 
+        //实际上，pool内部也可以分别管理可复用的和已被占用的对象(locked_objs 和 unlocked_objs)
         T* obj = objs_.back();
         objs_.pop_back();
 
