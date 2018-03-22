@@ -1,0 +1,60 @@
+Bridge设计模式的意义：
+1、解耦抽象和实现两个部分
+   bridge模式可以把abstraction and implementation 解耦出来，这样，两者可以独立变化。
+   其实也就是说，该模式可以接口client code 和 implementation code。
+2、Publish interface in an inheritance hierarchy, and bury implementation in its own inheritance hierarchy.
+   在一个继承层次中发布接口，并且把实现部分隐藏在自己的（与接口继承层次不同的）继承层次中。
+3、Beyond encapsulation, to insulation
+   不只是封装，还能隔离（抽象与实现）
+   
+面对的问题：
+"Hardening of the software arteries" has occurred by using subclassing of an abstract base class to provide alternative implementations. 
+This locks in compile-time binding between interface and implementation. The abstraction and implementation cannot be independently extended or composed.
+通过为抽象基类派生出子类来提供一些可选的实现，这一方法导致了“软件动脉硬化”这一问题的产生。
+且这种方式锁定了接口和实现的编译时绑定关系，接口和实现不能单独扩展或组合。
+
+【问题场景】
+考虑现在有一个"thread scheduling"的问题：
+参考"No-Bridge.png": 
+There are two types of thread schedulers, and two types of operating systems or "platforms". 
+Given this approach to specialization, we have to define a class for each permutation of these two dimensions. 
+
+If we add a new platform (say ... Java's Virtual Machine), what would our hierarchy look like?
+参考"No-Bridge2.png": 
+What if we had three kinds of thread schedulers, and four kinds of platforms? 
+What if we had five kinds of thread schedulers, and ten kinds of platforms? 
+The number of classes we would have to define is the product of the number of scheduling schemes and the number of platforms.
+由此可见，直接为每个platform从PreemptiveThreadScheduler和TimeSlicedThreadScheduler分别派生出一个子类来实现不同平台的不同调度策略，直接导致
+我们的类的数目急剧上升：num_of_class = num_of_strategy * num_of_platform.
+
+参考"Bridge.png":
+Bridge模式建议重构这样的爆炸式增长的继承层次，变成正交的两个层次：一个独立于平台的接口抽象，一个独立于平台的实现抽象。
+独立于平台的接口抽象类内部包含一个独立于平台的实现抽象类对象的指针：这个指针被初始化为指向一个具体的实现类的对象。
+于是：client可以与接口类交互，而接口类接着把所有请求委托给实现类。
+Bridge.png的UML图稍微有点问题，桥的右侧，由ThreadScheduler_Implementation派生出的三个类，名字应该分别是UnixTS, WindowsTS,JVM_TS。
+因为策略相关的部分，应该已经由左侧的类负责，右侧只需负责具体的平台实现即可。
+
+这里的好处在于：
+The interface object is the "handle" known and used by the client; 
+while the implementation object, or "body", is safely encapsulated to ensure that it may continue to evolve, or be entirely replaced (or shared at run-time.
+所以bridge模式也被称为"handle/body"模式。
+
+可以这么说：bridge模式把影响类变化的两个因素拆开，放在两个不同的类层次结构中，再通过聚合关联起两个类层次结构。
+bridge模式体现了很多面向对象设计原则的思想，包括“单一职责原则”、“开放封闭原则”、“里氏代换原则”、“依赖倒置原则”等。
+在使用bridge模式时，我们首先应该识别出一个类所具有的两个独立变化的维度，将它们设计为两个独立的继承层次结构，为两个维度都提供抽象层，并建立抽象耦合（聚合关联）。
+
+Bridge模式的几个元素：
+1. Abstraction - 模式的核心，定义了关键接口。包含向implementer的引用。
+2. Refined Abstraction - 精细化的抽象，在底下一层提供更精细的细节，把它们隐藏在implemetors外部。
+3. Implementer - 这个接口在类层次中比Abstraction更高一层，只是定义一些基本操作。
+4. Concrete Implementation - 提供Implementer的具体实现。
+
+
+何时能用Bridge模式？
+1、需要运行时进行实现绑定，而不是编译时锁定了实现（普通的“抽象与实现”这一继承层次是编译时绑定了实现的）。
+2、想要共享具体实现。
+3、想要分离多个会引起变化的因素，使得它们可以独立变化。
+4、现有设计可能会出现以下现状：在一个继承层次（不是单线继承那种）里面创建具体实现类，这会失去灵活性。
+
+
+
