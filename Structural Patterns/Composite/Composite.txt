@@ -1,0 +1,23 @@
+Composite模式的意义：
+1、Composite模式把一些对象组成一个树形结构，来表示“整体-部分”的结构层次。
+   Composite模式使得client可以以统一的方式对待单个对象和对象组合。
+2、递归组合："Directories contain entries, each of which could be a directory."
+   如果能把要开发的系统中的概念抽象成容器，这可以描述为：“容器包含元素，其中每个元素也可以是容器”。
+3、1-to-many "has a" up the "is a" hierarchy ： 组合优于继承。
+
+考虑应用Composite模式时：
+1、首先确保要解决的问题可以表示为“整体-部分”的关系。
+2、Divide your domain concepts into container classes, and containee classes.
+   Containers that contain containees, each of which could be a container.
+3、创建一个“最低公分母”界面(a "lowest common denominator" interface, 接口，client可见的View)，使你的容器和内部元素可以互换。
+4、All container and containee classes declare an "is a" relationship to the interface.
+5、Recursive: All container classes declare a one-to-many "has a" relationship to the interface.
+7、Child management methods [e.g. addChild(), removeChild()] should normally be defined in the Composite class. 
+   Unfortunately, the desire to treat Leaf and Composite objects uniformly may require that these methods be promoted to 
+   the abstract Component class.
+Composite模式的核心就是：它有能力让client操作一个对象，却不必知道该对象内部包含很多其他对象。这也就要求"child management"接口，
+被定义在Component抽象基类中，而不是Composite中。当然这带了问题：client可能会对leaf对象进行child manage操作，而实际上，这是没意义的。
+反过来，把"child management"接口放在Composite中，没有上述问题，但是失去了Composite模式的优势之一：
+client现在要关心一个对象内部是不是有很多其他对象，因为leaf对象和Composite对象接口不一致。
+当然，Composite模式并不是一定要把"child management"接口放在Conponent base类中，
+
