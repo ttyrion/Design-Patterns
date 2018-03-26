@@ -1,0 +1,71 @@
+装饰器模式（Decorator）的意义：
+1、动态地给一个对象增加职能。
+   注意，Decorator是给对象增加职能，而不是类。
+2、通过递归引用，给"the core object"增加由client指定的装饰（职能）。
+   注意，这里说的是递归，很容易联想到composite模式。确实，Decorator和Composite模式之间有很多联系：相似，但是不同。
+3、形象地描述：给一个礼物包装一下，装进一个盒子，再给盒子包装一下。
+Decorator模式核心四要素：
+1、the common interface
+2、the Core class
+3、the Decorator base class
+4、those Decorator subclasses
+
+
+解决的问题：
+想要在运行时给某个对象增加行为或者状态。
+这种情况下，显然继承是解决不了问题的：继承是静态绑定的，并且，会作用于整个类，而不是某个对象。
+
+对于假设中的创建窗口问题：
+对比采用继承层次(inheritance_window.png)和装饰器模式(decorator_window.png)，可以看到：Decorator模式减少了系统中类的数目。
+参照decorator_window.png，可以检查一下对Decorator的应用：
+1、Ensure the context is: a single core (or non-optional) component, several optional embellishments or wrappers, 
+   and an interface that is common to all.
+2、Create a "Lowest Common Denominator" interface that makes all classes interchangeable.
+3、Create a second level base class (Decorator) to support the optional wrapper classes.
+4、The Core class and Decorator class inherit from the LCD interface.
+5、The Decorator class declares a composition relationship to the LCD interface, and this data member is initialized in its constructor.
+6、The Decorator class delegates to the LCD object.
+7、Define a Decorator derived class for each optional embellishment.
+8、Decorator derived classes implement their wrapper functionality - and - delegate to the Decorator base class.
+
+
+装饰器模式结构：
+参考Decorator.png，这是Decorator模式UML类图。
+client几乎总是对CoreFunctionality.doThis()感兴趣，它可能会，也可能不会对OptionalOne.doThis()和OptionalTwo.doThis()感兴趣。
+个人认为最准备的描述应该是：
+client关心的是CoreFunctionality.doThis()以及OptionalXXX等增强的新特性。
+通常情况下都是这样：OptionalXXX类把client的请求委托到Decorator基类（即OptionalWrapper类），
+而Decorator基类则继续委托给被封装的核心对象(the contained "wrappee" core object)。
+
+经验法则（Rules of thumb）：
+1、Adapter provides a different interface to its subject. 
+   Proxy provides the same interface. 
+   Decorator provides an enhanced interface.
+2、Adapter changes an object's interface, Decorator enhances an object's responsibilities. 
+   Decorator is thus more transparent to the client. As a consequence(Decorator keeps the original interface), 
+   Decorator supports recursive composition, which isn't possible with pure Adapters.
+3、Composite and Decorator have similar structure diagrams, reflecting the fact that both rely on recursive composition 
+   to organize an open-ended number of objects.
+   Composite和Decorator模式都依赖递归来支持不限数量的对象的管理。
+4、A Decorator can be viewed as a degenerate Composite with only one component. 
+   However, a Decorator adds additional responsibilities - it isn't intended for object aggregation.
+   Decorator模式可以看成一个只包含一个component的Composite（Composite是可以包含多个elements(component)的）。
+   Decorator模式虽只能包含一个(core object)，但是它为这个object增加了其他职责。
+   总之：Decorator模式的目的不是对象聚合。
+5、Decorator is designed to let you add responsibilities to objects without subclassing. 
+   Composite's focus is not on embellishment but on representation. These intents are distinct but complementary. 
+   Consequently, Composite and Decorator are often used in concert.
+6、Composite could use Chain of Responsibility to let components access global properties through their parent. 
+   It could also use Decorator to override these properties on parts of the composition.
+   Composite模式可以和Decarotor模式结合。
+7、Decorator and Proxy have different purposes but similar structures. 
+   Both describe how to provide a level of indirection to another object, and the implementations keep a reference 
+   to the object to which they forward requests.
+   Decorator和Proxy模式在结构上很类似。
+8、Decorator lets you change the skin of an object. Strategy lets you change the guts.
+   Decorator是装饰器！
+
+   
+   
+   
+   
