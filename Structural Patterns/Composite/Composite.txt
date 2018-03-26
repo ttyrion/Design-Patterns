@@ -19,5 +19,6 @@ Composite模式的核心就是：它有能力让client操作一个对象，却�
 被定义在Component抽象基类中，而不是Composite中。当然这带了问题：client可能会对leaf对象进行child manage操作，而实际上，这是没意义的。
 反过来，把"child management"接口放在Composite中，没有上述问题，但是失去了Composite模式的优势之一：
 client现在要关心一个对象内部是不是有很多其他对象，因为leaf对象和Composite对象接口不一致。
-当然，Composite模式并不是一定要把"child management"接口放在Conponent base类中，
+当然，Composite模式并不是一定要把"child management"接口放在Component base类中，比如，当add、remove之类的操作，不应该，也不能被client
+统一对待的时候。
 
