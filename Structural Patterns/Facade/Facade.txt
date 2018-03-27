@@ -1,0 +1,22 @@
+Facade门面模式（或称外观模式）的意义：
+1、封装一个或多个子系统的接口，给client提供一个统一的、更简洁的接口，使得client可以更简单地使用这些子系统。
+2、把复杂的子系统封装成一套简便的接口。
+
+Facade模式没有类图，只有一个系统结构示意图（Facade模式属于structural pattern）：
+如Facade.png，client只需跟Facade交互，而不是直接跟底层的某个或多个子系统交互。
+通常情况下，Facade模式中的Facade是一个单例，client也只需跟一个Facade类有关联关系。不过，Facade模式并不限制系统中
+Facade类的数目，我们可以根据实际情况，根据子系统数目和复杂性，提供一个或多个Facade类。Facade类可以有多个，不过，一般
+都是实现成单例的。
+
+Facade模式和Adapter模式有相似之处，都是封装现有子系统或现有类。但两者本质区别很大：
+1、Facade模式会定义一套新的接口，创建一个新的简单的对象来代替整个子系统，提供给client使用，这个简单的对象把client的请求委托到内部子系统。
+   Adapter模式不会定义新接口，它只会把现有的类或子系统（Adapter并不是只能封装一个类）封装成一套已经存在的接口形式，以便现有类或者子系统能被重用。
+   这里已经能看出Facade模式和Adapter模式的本质区别，它们的目的是不一样的：
+   Facade的目的是封装子系统，让子系统能更加简便地被客户端使用，同时也能降低客户端和子系统的耦合（客户端不用跟子系统内那么多的类有交互）。
+   Adapter的目的是重用，它是把子系统或者已有的类封装成能被现有其他模块复用的一套接口。
+
+2、Facade模式不会改变子系统的功能，也不给子系统增加任何新特性，且子系统也不知道Facade的存在。
+3、有时候，Abstract Factory倒是可以作为Facade模式的一种替代方案，比如想要隐藏平台相关的类。
+4、Facade模式一般是单例。
+总结就是：
+The intent of Facade is to produce a simpler interface, and the intent of Adapter is to design to an existing interface. 
